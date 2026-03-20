@@ -46,14 +46,12 @@ _c_spinner() {
 }
 
 _c_start_spinner() {
-  _c_spinner &
+  ( _c_spinner ) &
   _c_spinner_pid=$!
-  disown $_c_spinner_pid 2>/dev/null
 }
 
 _c_stop_spinner() {
-  kill "$_c_spinner_pid" 2>/dev/null
-  wait "$_c_spinner_pid" 2>/dev/null 2>&1
+  { kill "$_c_spinner_pid" && wait "$_c_spinner_pid"; } 2>/dev/null
   printf "\r\033[K" >&2
 }
 
