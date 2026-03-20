@@ -35,10 +35,23 @@ _c_add_history() {
   fi
 }
 
+_c_spinner() {
+  local frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+  local i=0
+  while true; do
+    printf "\r\033[K%s thinking..." "${frames[$((i % ${#frames[@]}))]}" >&2
+    i=$((i + 1))
+    sleep 0.1
+  done
+}
+
 _c_translate() {
   local result
-  printf "thinking..." >&2
+  _c_spinner &
+  local spinner_pid=$!
   result=$(claude -p "$_c_prompt User request: $*")
+  kill "$spinner_pid" 2>/dev/null
+  wait "$spinner_pid" 2>/dev/null
   printf "\r\033[K" >&2
   # Strip markdown fences and inline backticks
   result=$(echo "$result" | sed '/^```/d' | sed 's/^`\(.*\)`$/\1/' | sed '/^$/d')
