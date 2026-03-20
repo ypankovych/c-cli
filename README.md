@@ -2,7 +2,7 @@
 
 Natural language to shell commands, powered by [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
-![demo](demo.gif)
+[![demo](https://asciinema.org/a/857789.svg)](https://asciinema.org/a/857789)
 
 ## Install
 
