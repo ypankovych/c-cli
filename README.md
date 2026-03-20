@@ -2,14 +2,7 @@
 
 Natural language to shell commands, powered by [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
-```
-$ c show disk usage sorted by size
-> du -sh * | sort -rh
-4.2G    node_modules
-1.1G    .git
-256M    data
-[1s]
-```
+![demo](demo.gif)
 
 ## Install
 
