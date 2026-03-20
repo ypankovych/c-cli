@@ -37,7 +37,9 @@ _c_add_history() {
 
 _c_translate() {
   local result
+  printf "thinking..." >&2
   result=$(claude -p "$_c_prompt User request: $*")
+  printf "\r\033[K" >&2
   # Strip markdown fences and inline backticks
   result=$(echo "$result" | sed '/^```/d' | sed 's/^`\(.*\)`$/\1/' | sed '/^$/d')
   # Join multi-line into single command
