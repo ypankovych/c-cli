@@ -122,7 +122,9 @@ c() {
       echo "> $fix" >&2
       _c_add_history "$fix"
       echo "$(date '+%Y-%m-%d %H:%M:%S') | (retry) $* | $fix" >> ~/.c_history
+      local retry_start=$SECONDS
       eval "$fix"
+      echo "[$(( SECONDS - retry_start ))s]" >&2
     fi
   fi
 }
