@@ -45,14 +45,23 @@ _c_spinner() {
   done
 }
 
+_c_start_spinner() {
+  _c_spinner &
+  _c_spinner_pid=$!
+  disown $_c_spinner_pid 2>/dev/null
+}
+
+_c_stop_spinner() {
+  kill "$_c_spinner_pid" 2>/dev/null
+  wait "$_c_spinner_pid" 2>/dev/null 2>&1
+  printf "\r\033[K" >&2
+}
+
 _c_translate() {
   local result
-  _c_spinner &
-  local spinner_pid=$!
+  _c_start_spinner
   result=$(claude -p "$_c_prompt User request: $*")
-  kill "$spinner_pid" 2>/dev/null
-  wait "$spinner_pid" 2>/dev/null
-  printf "\r\033[K" >&2
+  _c_stop_spinner
   # Strip markdown fences and inline backticks
   result=$(echo "$result" | sed '/^```/d' | sed 's/^`\(.*\)`$/\1/' | sed '/^$/d')
   # Join multi-line into single command
@@ -105,12 +114,9 @@ c() {
     read -r retry
     if [ "$retry" = "y" ] || [ "$retry" = "Y" ]; then
       local fix
-      _c_spinner &
-      local retry_spinner_pid=$!
+      _c_start_spinner
       fix=$(claude -p "$_c_prompt The previous command '$result' failed. User wanted: $*. Give a corrected command.")
-      kill "$retry_spinner_pid" 2>/dev/null
-      wait "$retry_spinner_pid" 2>/dev/null
-      printf "\r\033[K" >&2
+      _c_stop_spinner
       fix=$(echo "$fix" | sed '/^```/d' | sed 's/^`\(.*\)`$/\1/' | sed '/^$/d')
       echo "> $fix" >&2
       _c_add_history "$fix"
