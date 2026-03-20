@@ -105,7 +105,12 @@ c() {
     read -r retry
     if [ "$retry" = "y" ] || [ "$retry" = "Y" ]; then
       local fix
+      _c_spinner &
+      local retry_spinner_pid=$!
       fix=$(claude -p "$_c_prompt The previous command '$result' failed. User wanted: $*. Give a corrected command.")
+      kill "$retry_spinner_pid" 2>/dev/null
+      wait "$retry_spinner_pid" 2>/dev/null
+      printf "\r\033[K" >&2
       fix=$(echo "$fix" | sed '/^```/d' | sed 's/^`\(.*\)`$/\1/' | sed '/^$/d')
       echo "> $fix" >&2
       _c_add_history "$fix"
