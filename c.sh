@@ -46,12 +46,15 @@ _c_spinner() {
 }
 
 _c_start_spinner() {
-  ( _c_spinner ) &
+  if [ -n "$ZSH_VERSION" ]; then setopt local_options no_monitor no_notify; fi
+  _c_spinner &
   _c_spinner_pid=$!
 }
 
 _c_stop_spinner() {
-  { kill "$_c_spinner_pid" && wait "$_c_spinner_pid"; } 2>/dev/null
+  if [ -n "$ZSH_VERSION" ]; then setopt local_options no_monitor no_notify; fi
+  kill "$_c_spinner_pid" 2>/dev/null
+  wait "$_c_spinner_pid" 2>/dev/null
   printf "\r\033[K" >&2
 }
 
